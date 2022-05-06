@@ -47,7 +47,7 @@ if __name__ == '__main__':
         color="Year",
         title="Average daily temperature in Israel as a function of Day of the Year")
     # f.show()
-    fig1.write_image("../ex2/poly_fit_q2_pt1.png")
+    fig1.write_image("../exercises/poly_fit_q2_pt1.png")
 
     israel_temp_by_month_std = il_temperature_data.groupby("Month").agg({"Temp": np.std})
     israel_temp_by_month_std.reset_index(inplace=True)
@@ -56,7 +56,7 @@ if __name__ == '__main__':
                   title="Standard deviation of Monthly Temperature in Israel")
     fig2.update_xaxes(tickmode="linear")
     # f2.show()
-    fig2.write_image("../ex2/poly_fit_q2_pt2.png")
+    fig2.write_image("../exercises/poly_fit_q2_pt2.png")
 
     # Question 3 - Exploring differences between countries
     diff_between_countries = city_temperature_data.groupby(["Country", "Month"]).agg(Mean=("Temp", np.mean),
@@ -66,7 +66,7 @@ if __name__ == '__main__':
                    title="Average Monthly temperature")
     fig3.update_xaxes(tickmode="linear")
     # f3.show()
-    fig3.write_image("../ex2/poly_fit_q3.png")
+    fig3.write_image("../exercises/poly_fit_q3.png")
 
     # Question 4 - Fitting model for different values of `k`
     train_DayOfYear, train_Temp, test_DayOfYear, test_Temp = split_train_test(il_temperature_data["DayOfYear"],
@@ -85,7 +85,7 @@ if __name__ == '__main__':
     fig4 = px.bar(il_loss_data, x="k", y="Loss",
                   title="Test Error as a function of k")
     fig4.update_xaxes(tickmode="linear")
-    fig4.write_image("../ex2/poly_fit_q4.png")
+    fig4.write_image("../exercises/poly_fit_q4.png")
 
     # Question 5 - Evaluating fitted model on different countries
     poly_fit_5 = PolynomialFitting(5)
@@ -101,4 +101,4 @@ if __name__ == '__main__':
 
     fig5 = px.bar(other_countries_loss_data, x="Country", y="Loss",
                   title="Loss of Temperature Prediction Per Country via Israel Training")
-    fig5.write_image("../ex2/poly_fit_q5.png")
+    fig5.write_image("../exercises/poly_fit_q5.png")
