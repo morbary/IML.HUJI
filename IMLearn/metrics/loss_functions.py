@@ -67,7 +67,6 @@ def accuracy(y_true: np.ndarray, y_pred: np.ndarray) -> float:
     return acc
 
 
-
 def cross_entropy(y_true: np.ndarray, y_pred: np.ndarray) -> float:
     """
     Calculate the cross entropy of given predictions
@@ -84,4 +83,3 @@ def cross_entropy(y_true: np.ndarray, y_pred: np.ndarray) -> float:
     Cross entropy of given predictions
     """
     raise NotImplementedError()
-
