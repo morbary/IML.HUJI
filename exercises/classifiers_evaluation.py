@@ -50,7 +50,7 @@ def run_perceptron():
         fig.update_layout(title=n,
                           xaxis_title="Iteration",
                           yaxis_title="Losses")
-        fig.write_image(f"../ex3/perceptron{n}.png")
+        fig.write_image(f"../exercises/perceptron{n}.png")
 
 
 def get_ellipse(mu: np.ndarray, cov: np.ndarray):
@@ -139,7 +139,7 @@ def compare_gaussian_classifiers():
                            rows=1, cols=2)
         fig.update_layout(height=600, width=1200, title_text=f"Predictions on {f[:-4]} dataset", title_x=0.5,
                           margin=dict(t=100)).update_xaxes(visible=False).update_yaxes(visible=False)
-        fig.write_image(f"../ex3/class_compare_{f[:-4]}.png")
+        fig.write_image(f"../exercises/class_compare_{f[:-4]}.png")
 
 
 if __name__ == '__main__':
