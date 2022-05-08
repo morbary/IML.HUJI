@@ -1,6 +1,6 @@
 import numpy as np
 from typing import Tuple
-from IMLearn.learners.metalearners.adaboost import AdaBoost
+from IMLearn.metalearners.adaboost import AdaBoost
 from IMLearn.learners.classifiers import DecisionStump
 from utils import *
 import plotly.graph_objects as go
@@ -72,3 +72,5 @@ if __name__ == '__main__':
     decision_stump = DecisionStump()
     decision_stump.fit(X, y_true)
     print("sign = ", decision_stump.sign_, ", threshold = ", decision_stump.threshold_, ", feauture index = ", decision_stump.j_)
+    print(decision_stump.predict(X))
+    print(decision_stump.loss(X,y_true))

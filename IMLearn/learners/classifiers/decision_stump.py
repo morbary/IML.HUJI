@@ -42,21 +42,16 @@ class DecisionStump(BaseEstimator):
             Responses of input data to fit to
         """
 
-
-
         split_feature_index = None
         split_thres = None
         split_sign = None
 
-        # n_samples = np.size(y)  # number of samples
-        # features = X.shape[1]  # number of features
-
         min_err = 1
         for sign in {-1, 1}:
-            thres_mat = np.apply_along_axis(self._find_threshold, 0, X, y_true, sign)
+            thres_mat = np.apply_along_axis(self._find_threshold, 0, X, y, sign)
             min_err_index = np.argmin(thres_mat[1:], axis=1)
             threshold = thres_mat[0, min_err_index]
-            curr_min_err = thres_mat[1, min_err_index]
+            curr_min_err = thres_mat[1, min_err_index][0]
             if curr_min_err < min_err:
                 min_err = curr_min_err
                 split_feature_index = min_err_index[0]
@@ -89,7 +84,10 @@ class DecisionStump(BaseEstimator):
         Feature values strictly below threshold are predicted as `-sign` whereas values which equal
         to or above the threshold are predicted as `sign`
         """
-        raise NotImplementedError()
+        n_samples = X.shape[0]  # number of samples
+        responses = np.ones((n_samples,))  # vector of ones
+        responses[X[:, self.j_] < self.threshold_] = -self.sign_  # assign -1 on values under threshold
+        return responses
 
     def _find_threshold(self, values: np.ndarray, labels: np.ndarray, sign: int) -> Tuple[float, float]:
         """
@@ -122,7 +120,7 @@ class DecisionStump(BaseEstimator):
         which equal to or above the threshold are predicted as `sign`
         """
         thr = None
-        thr_err = -1
+        thr_err = 1
         n_samples = labels.shape[0]  # number of samples
 
         # order by values
@@ -163,6 +161,5 @@ class DecisionStump(BaseEstimator):
         loss : float
             Performance under missclassification loss function
         """
-        raise NotImplementedError()
-        # y_predicted = self._predict(X)
-        # return misclassification_error(y, y_predicted)
+        y_predicted = self._predict(X)
+        return misclassification_error(y, y_predicted)
