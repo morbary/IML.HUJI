@@ -57,5 +57,18 @@ def fit_and_evaluate_adaboost(noise, n_learners=250, train_size=5000, test_size=
 
 
 if __name__ == '__main__':
-    np.random.seed(0)
-    raise NotImplementedError()
+    # np.random.seed(0)
+    # raise NotImplementedError()
+    X = np.array([[-1, 88.8, 1],
+                  [1, 68.8, 1],
+                  [1, 77.2, -1],
+                  [1, 81.7, 1],
+                  [-1, 74.8, 1],
+                  [-1, 69.3, 1],
+                  [1, 70.2, -1],
+                  [1, 69.5, 1]])
+    y_true = np.array([1, 1, 1, 1, -1, -1, -1, -1])
+
+    decision_stump = DecisionStump()
+    decision_stump.fit(X, y_true)
+    print("sign = ", decision_stump.sign_, ", threshold = ", decision_stump.threshold_, ", feauture index = ", decision_stump.j_)
