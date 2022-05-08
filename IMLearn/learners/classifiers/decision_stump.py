@@ -85,8 +85,9 @@ class DecisionStump(BaseEstimator):
         to or above the threshold are predicted as `sign`
         """
         n_samples = X.shape[0]  # number of samples
-        responses = np.ones((n_samples,))  # vector of ones
-        responses[X[:, self.j_] < self.threshold_] = -self.sign_  # assign -1 on values under threshold
+        responses = np.zeros((n_samples,))  # assign vector of zeros
+        responses[X[:, self.j_] >= self.threshold_] = self.sign_  # assign 1 on values larger or equal to threshold
+        responses[X[:, self.j_] < self.threshold_] = -self.sign_  # assign -1 on values lower than threshold
         return responses
 
     def _find_threshold(self, values: np.ndarray, labels: np.ndarray, sign: int) -> Tuple[float, float]:
@@ -132,8 +133,8 @@ class DecisionStump(BaseEstimator):
 
             # assign predicted values
             y_pred = np.zeros((n_samples,))
-            y_pred[values_sorted >= temp_thres] = sign
-            y_pred[values_sorted < temp_thres] = -sign
+            y_pred[values_sorted >= temp_thres] = sign  # assign sign on values larger or equal to threshold
+            y_pred[values_sorted < temp_thres] = -sign  # assign -sign on values lower than threshold
 
             # calculate misclassification error
             curr_err = misclassification_error(labels_sorted, y_pred, True)
