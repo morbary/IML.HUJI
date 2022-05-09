@@ -121,7 +121,7 @@ class DecisionStump(BaseEstimator):
         which equal to or above the threshold are predicted as `sign`
         """
         thr = None
-        thr_err = 1
+        thr_err = np.inf
         n_samples = labels.shape[0]  # number of samples
 
         # order by values
@@ -137,7 +137,8 @@ class DecisionStump(BaseEstimator):
             y_pred[values_sorted < temp_thres] = -sign  # assign -sign on values lower than threshold
 
             # calculate misclassification error
-            curr_err = misclassification_error(labels_sorted, y_pred, True)
+            curr_err = self.loss_helper(labels_sorted, y_pred)
+            # curr_err = misclassification_error(np.sign(labels_sorted), np.sign(y_pred))
 
             if curr_err < thr_err:  # get threshold with minimum error
                 thr = temp_thres
@@ -162,5 +163,13 @@ class DecisionStump(BaseEstimator):
         loss : float
             Performance under missclassification loss function
         """
+
         y_predicted = self._predict(X)
-        return misclassification_error(y, y_predicted)
+        return self.loss_helper(y, y_predicted)
+
+
+    def loss_helper(self, y, y_predicted):
+
+        error = np.sign(y) != np.sign(y_predicted)
+        weighted_error = np.sum(np.absolute(y[error]))
+        return weighted_error
