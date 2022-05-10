@@ -58,16 +58,17 @@ def fit_and_evaluate_adaboost(noise, n_learners=250, train_size=5000, test_size=
                     line=dict(color="pink")),
          go.Scatter(x=num_learners, y=test_loss, name="Testing Error", mode="lines",
                     line=dict(color="green"))])
-    fig.update_layout(title=rf"$\text{{Adaboost Error as function of number of Learners, noise = {noise}}}$",
-                      xaxis_title="Number of Learners",
-                      yaxis_title="Error")
+    fig.update_layout(
+        title=f'<b>AdaBoost: Performance Error on Data with Noise = {noise}</b>',
+        xaxis_title="Number of Learners",
+        yaxis_title="Error")
     fig.show()
     fig.write_image(f"../exercises/q1-error_as_function_of_learners_noise_{noise}.png")
 
     # Question 2: Plotting decision surfaces
     T = [5, 50, 100, 250]
     lims = np.array([np.r_[train_X, test_X].min(axis=0), np.r_[train_X, test_X].max(axis=0)]).T + np.array([-.1, .1])
-    fig2 = make_subplots(rows=2, cols=2, subplot_titles=[rf"$\text{{partial prediction of {t} learners}}$" for t in T])
+    fig2 = make_subplots(rows=2, cols=2, subplot_titles=[f"<sup><b>{t} learners<b></sup>" for t in T])
     for i, t in enumerate(T):
         fig2.add_traces([decision_surface(lambda x: adaboost.partial_predict(x, t), lims[0], lims[1], showscale=False),
                          go.Scatter(x=test_X[:, 0], y=test_X[:, 1], mode="markers", showlegend=False,
@@ -75,7 +76,10 @@ def fit_and_evaluate_adaboost(noise, n_learners=250, train_size=5000, test_size=
                                                 line=dict(color="black", width=1)))],
                         rows=(i // 2) + 1, cols=(i % 2) + 1)
 
-    fig2.update_layout(title=rf"$\text{{Decision Boundaries, noise = {noise}}}$", margin=dict(t=100)) \
+    fig2.update_layout(title=f"<b>AdaBoost: Decision Boundaries on Test Set with Noise = {noise}</b>",
+                       margin=dict(t=100),
+                       yaxis1_range=[-1, 1], yaxis2_range=[-1, 1], yaxis3_range=[-1, 1], yaxis4_range=[-1, 1],
+                       xaxis1_range=[-1, 1], xaxis2_range=[-1, 1], xaxis3_range=[-1, 1], xaxis4_range=[-1, 1]) \
         .update_xaxes(visible=False).update_yaxes(visible=False)
     fig2.show()
     fig2.write_image(f"../exercises/q2-decision_boundaries_noise_{noise}.png")
@@ -91,13 +95,16 @@ def fit_and_evaluate_adaboost(noise, n_learners=250, train_size=5000, test_size=
 
     acc = accuracy(test_y, adaboost.predict(test_X))
 
-    # fig3 = make_subplots(rows=2, cols=2, subplot_titles=[rf"$partial prediction of {{{t}}} learners$" for t in T])
-
     fig3 = go.Figure([decision_surface(lambda x: adaboost.partial_predict(x, t), lims[0], lims[1], showscale=False),
-                      go.Scatter(x=test_X[:, 0], y=test_X[:, 1], mode='markers',
-                                 marker=dict(color=test_y, colorscale=[custom[0], custom[-1]]))])
-    fig3.update_layout(
-        title=rf"$\text{{Decision Surface of Ensemble with lowest Error ,ensemble size={best_num_of_learners}, accuracy ={acc}, noise = {noise}}}$")
+                      go.Scatter(x=test_X[:, 0], y=test_X[:, 1], mode='markers', showlegend=False,
+                                 marker=dict(color=test_y, colorscale=[custom[0], custom[-1]],
+                                             line=dict(color="black", width=1)))])
+    fig3.update_layout(height=600, width=900,
+        title=f'<b>AdaBoost: Decision Surface of Ensemble with Lowest Error on Test set with Noise = {noise}</b><br>'
+              f'<sup><b>Ensemble size = {best_num_of_learners}, Accuracy = {acc}</b></sup>')
+    fig3.update_xaxes(range=[-1, 1], visible=False)
+    fig3.update_yaxes(range=[-1, 1], visible=False)
+    # fig3.update_layout(height=600, width=1200)
     # fig3.update_layout(title=rf"$textbf{{Decision Surface of Ensemble with lowest Error}}$",
     #                    margin=dict(t=100)).update_xaxes(visible=False).update_yaxes(visible=False)
     fig3.show()
@@ -106,10 +113,15 @@ def fit_and_evaluate_adaboost(noise, n_learners=250, train_size=5000, test_size=
     # Question 4: Decision surface with weighted samples
     normalized_D = adaboost.D_ / np.max(adaboost.D_) * 5
     fig4 = go.Figure([decision_surface(lambda x: adaboost.predict(x), lims[0], lims[1], showscale=False),
-                      go.Scatter(x=train_X[:, 0], y=train_X[:, 1], mode='markers',
-                                 marker=dict(color=train_y, size=normalized_D, colorscale=[custom[0], custom[-1]]))],
-                     layout=go.Layout(
-                         title=rf"$\text{{Decision Surface of full ensemble on training set in proportion to distributions, noise = {noise}}}$"))
+                      go.Scatter(x=train_X[:, 0], y=train_X[:, 1], mode='markers', showlegend=False,
+                                 marker=dict(color=train_y, size=normalized_D, colorscale=[custom[0], custom[-1]],
+                                             line=dict(color="black", width=1)))],
+                     layout=go.Layout(height=600, width=900,
+                         title=f"<b>Decision Surface of full Ensemble on Training set on Data with Noise = {noise}</b><br>"
+                               f"<sup><b>Marker size proportional to sample weights</b></sup>"))
+    fig4.update_xaxes(visible=False).update_yaxes(visible=False)
+    fig4.update_xaxes(range=[-1, 1], visible=False)
+    fig4.update_yaxes(range=[-1, 1], visible=False)
     fig4.show()
     fig4.write_image(f"../exercises/q4-decision_surface_w_distributions_noise_{noise}.png")
 
