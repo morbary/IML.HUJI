@@ -169,7 +169,6 @@ class DecisionStump(BaseEstimator):
 
 
     def loss_helper(self, y, y_predicted):
-
         error = np.sign(y) != np.sign(y_predicted)
         weighted_error = np.sum(np.absolute(y[error]))
         return weighted_error
