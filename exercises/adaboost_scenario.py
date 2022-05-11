@@ -104,9 +104,6 @@ def fit_and_evaluate_adaboost(noise, n_learners=250, train_size=5000, test_size=
               f'<sup><b>Ensemble size = {best_num_of_learners}, Accuracy = {acc}</b></sup>')
     fig3.update_xaxes(range=[-1, 1], visible=False)
     fig3.update_yaxes(range=[-1, 1], visible=False)
-    # fig3.update_layout(height=600, width=1200)
-    # fig3.update_layout(title=rf"$textbf{{Decision Surface of Ensemble with lowest Error}}$",
-    #                    margin=dict(t=100)).update_xaxes(visible=False).update_yaxes(visible=False)
     fig3.show()
     fig3.write_image(f"../exercises/q3-decision_surface_noise_{noise}.png")
 
