@@ -127,23 +127,3 @@ if __name__ == '__main__':
     np.random.seed(0)
     fit_and_evaluate_adaboost(0)
     fit_and_evaluate_adaboost(0.4)
-
-    # X = np.array([[-1, 88.8, 1],
-    #               [1, 68.8, 1],
-    #               [1, 77.2, -1],
-    #               [1, 81.7, 1],
-    #               [-1, 74.8, 1],
-    #               [-1, 69.3, 1],
-    #               [1, 70.2, -1],
-    #               [1, 69.5, 1]])
-    # y_true = np.array([1, 1, 1, 1, -1, -1, -1, -1])
-    #
-    # decision_stump = DecisionStump()
-    # # decision_stump.fit(X, y_true)
-    # # print("sign = ", decision_stump.sign_, ", threshold = ", decision_stump.threshold_, ", feature index = ", decision_stump.j_)
-    # # print(decision_stump.predict(X))
-    # # print(decision_stump.loss(X,y_true))
-    #
-    # adaboost = AdaBoost(lambda: DecisionStump(), 3)
-    # adaboost.fit(X, y_true)
-    # print(adaboost.predict(X))
