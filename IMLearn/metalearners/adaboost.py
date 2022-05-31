@@ -1,7 +1,7 @@
 import numpy as np
-from ..base import BaseEstimator
+from base import BaseEstimator
 from typing import Callable, NoReturn
-from ..metrics import misclassification_error
+from metrics import misclassification_error
 
 
 class AdaBoost(BaseEstimator):
