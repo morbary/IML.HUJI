@@ -7,10 +7,10 @@ import pandas as pd
 from IMLearn import BaseEstimator
 
 
-def split_k_groups(X, y, k):
-    if k > len(X):
+def split_k_groups(x, y, k):
+    if k > len(x):
         return None
-    X_split = np.array_split(X, k)
+    X_split = np.array_split(x, k)
     y_split = np.array_split(y, k)
     return X_split, y_split
 
