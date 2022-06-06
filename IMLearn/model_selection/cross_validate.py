@@ -2,7 +2,33 @@ from __future__ import annotations
 from copy import deepcopy
 from typing import Tuple, Callable
 import numpy as np
+import pandas as pd
+
 from IMLearn import BaseEstimator
+
+
+def split_k_groups(X, y, k):
+    if k > len(X):
+        return None
+    X_split = np.array_split(X, k)
+    y_split = np.array_split(y, k)
+    return X_split, y_split
+
+
+# def split_train_dev_test(X_df, y_df, X_df_split, y_df_split, i, j):
+#     # use Si as development
+#     dev_X = X_df_split[i]
+#     dev_y = y_df_split[i]
+#
+#     # use Sj as test
+#     test_X = X_df_split[j]
+#     test_y = y_df_split[j]
+#
+#     # train model on S\SiUSj
+#     train_X = X_df.drop(dev_X.index).drop(test_X.index)
+#     train_y = y_df.loc[train_X.index]
+#
+#     return train_X, train_y, dev_X, dev_y, test_X, test_y
 
 
 def cross_validate(estimator: BaseEstimator, X: np.ndarray, y: np.ndarray,
@@ -37,4 +63,45 @@ def cross_validate(estimator: BaseEstimator, X: np.ndarray, y: np.ndarray,
     validation_score: float
         Average validation score over folds
     """
-    raise NotImplementedError()
+
+    X_df = pd.DataFrame(X)
+    y_df = pd.DataFrame(y)
+
+    # split X,y into cv disjoint sets (folds)
+    X_df_split, y_df_split = split_k_groups(X_df, y_df, cv)
+
+    train_scores = []
+    validation_scores = []
+    for i in range(cv):  # for all i!=j, j>=k, i>=1
+        # use Si as development
+        X_dev, y_dev = X_df_split[i], y_df_split[i]
+
+        # train model on S\SiUSj
+        X_train = X_df.drop(X_dev.index)
+        y_train = y_df.loc[X_train.index]
+        estimator.fit(X_train, y_train)
+
+        # report mean and standard deviation of the k losses
+        train_scores.append(scoring(y_train, estimator.predict(X_train)))
+        validation_scores.append(scoring(y_dev, estimator.predict(X_dev)))
+    return np.mean(train_scores), np.mean(validation_scores)
+
+# if __name__ == '__main__':
+# k = 3
+# cv = k
+#
+# X = np.array([[1, 2, 3, 4, 5],
+#               [6, 7, 8, 9, 10],
+#               [11, 12, 13, 14, 15],
+#               [16, 17, 18, 19, 20]])
+#
+# y = np.array([20, 30, 40, 50])
+#
+# X_df = pd.DataFrame(X)
+# y_df = pd.DataFrame(y)
+# X_df_split, y_df_split = split_k_groups(X_df, y_df, cv)
+#
+# ## for all i!=j, j>=k, i>=1
+# for i in range(cv):
+#     for j in range(i + 1, cv):
+#         train_X, train_y, dev_X, dev_y, test_X, test_y = split_train_dev_test(X_df_split, y_df_split, i, j)
