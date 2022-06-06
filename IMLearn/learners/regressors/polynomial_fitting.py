@@ -20,7 +20,7 @@ class PolynomialFitting(BaseEstimator):
             Degree of polynomial to fit
         """
         super().__init__()
-        self.linear_reg_estimator = LinearRegression()
+        self.linear_reg_estimator = LinearRegression(include_intercept=False)
         self.k = k
 
     def _fit(self, X: np.ndarray, y: np.ndarray) -> NoReturn:

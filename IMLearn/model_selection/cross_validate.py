@@ -77,10 +77,10 @@ def cross_validate(estimator: BaseEstimator, X: np.ndarray, y: np.ndarray,
         X_dev, y_dev = X_df_split[i], y_df_split[i]
 
         # train model on S\SiUSj
-        X_train = X_df.drop(X_dev.index)
-        y_train = y_df.loc[X_train.index]
+        X_train = np.squeeze(X_df.drop(X_dev.index).to_numpy())
+        y_train = np.squeeze(y_df.drop(y_dev.index).to_numpy())
         estimator.fit(X_train, y_train)
-
+        X_dev, y_dev = np.squeeze(X_dev.to_numpy()), np.squeeze(y_dev.to_numpy())
         # report mean and standard deviation of the k losses
         train_scores.append(scoring(y_train, estimator.predict(X_train)))
         validation_scores.append(scoring(y_dev, estimator.predict(X_dev)))
