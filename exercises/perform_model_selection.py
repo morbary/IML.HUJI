@@ -48,11 +48,10 @@ def select_polynomial_degree(n_samples: int = 100, noise: float = 5):
     fig1.show()
     save_to1 = "../exercises/q1-" + str(noise) + "_noise--" + str(n_samples) + "_samples.png"
     fig1.write_image(save_to1)
-    # fig1.write_image("../exercises/q1-true_func_w_noisy_train_test_data.png")
 
+    # Question 2 - Perform CV for polynomial fitting with degrees 0,1,...,10
     X_train, y_train, X_test, y_test = np.squeeze(X_train.to_numpy()), np.squeeze(y_train.to_numpy()), \
                                        np.squeeze(X_test.to_numpy()), np.squeeze(y_test.to_numpy())
-    # Question 2 - Perform CV for polynomial fitting with degrees 0,1,...,10
     k = list(range(0, 11))
     train_mse = []
     validation_mse = []
@@ -69,14 +68,11 @@ def select_polynomial_degree(n_samples: int = 100, noise: float = 5):
         go.Scatter(x=k, y=validation_mse, name="Validation Error", mode='lines+markers', marker=dict(color='blue')))
     fig2.update_layout(title_text=f"MSE for different polynomial degrees on 5-fold cross-validation<br>"
                                   f"<sub>Number of samples = {n_samples}, Noise level = {noise}</sub>")
-
     fig2.update_xaxes(title_text="Polynomial Degree (k)")
     fig2.update_yaxes(title_text="Average MSE")
     fig2.show()
     save_to2 = "../exercises/q2-" + str(noise) + "_noise--" + str(n_samples) + "_samples.png"
     fig2.write_image(save_to2)
-
-    # fig2.write_image("../exercises/q2-MSE_for_different_polynomial_degrees.png")
 
     # Question 3 - Using best value of k, fit a k-degree polynomial model and report test error
     best_k_val = k[np.argmin(validation_mse)]
