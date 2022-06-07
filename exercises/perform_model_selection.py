@@ -99,7 +99,8 @@ def select_regularization_parameter(n_samples: int = 50, n_evaluations: int = 50
         Number of regularization parameter values to evaluate for each of the algorithms
     """
     # Question 6 - Load diabetes dataset and split into training and testing portions
-    raise NotImplementedError()
+    diabetes_ds = datasets.load_diabetes()
+
 
     # Question 7 - Perform CV for different values of the regularization parameter for Ridge and Lasso regressions
     raise NotImplementedError()
