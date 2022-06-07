@@ -47,8 +47,8 @@ def select_polynomial_degree(n_samples: int = 100, noise: float = 5):
     fig1.update_xaxes(title_text="X value")
     fig1.update_yaxes(title_text="y value")
     fig1.show()
-    save_to1 = "../exercises/q1-" + str(noise) + "_noise--" + str(n_samples) + "_samples.png"
-    fig1.write_image(save_to1)
+    # save_to1 = "../exercises/q1-" + str(noise) + "_noise--" + str(n_samples) + "_samples.png"
+    # fig1.write_image(save_to1)
 
     # Question 2 - Perform CV for polynomial fitting with degrees 0,1,...,10
     X_train, y_train, X_test, y_test = np.squeeze(X_train.to_numpy()), np.squeeze(y_train.to_numpy()), \
@@ -72,18 +72,18 @@ def select_polynomial_degree(n_samples: int = 100, noise: float = 5):
     fig2.update_xaxes(title_text="Polynomial Degree (k)")
     fig2.update_yaxes(title_text="Average MSE")
     fig2.show()
-    save_to2 = "../exercises/q2-" + str(noise) + "_noise--" + str(n_samples) + "_samples.png"
-    fig2.write_image(save_to2)
+    # save_to2 = "../exercises/q2-" + str(noise) + "_noise--" + str(n_samples) + "_samples.png"
+    # fig2.write_image(save_to2)
 
     # Question 3 - Using best value of k, fit a k-degree polynomial model and report test error
     best_k_val = k[np.argmin(validation_mse)]
     poly_fit = PolynomialFitting(best_k_val)
     poly_fit.fit(X_train, y_train)
     y_pred = poly_fit.predict(X_test)
-    test_mse = mean_square_error(y_test, y_pred)
+    test_mse = np.round(mean_square_error(y_test, y_pred), 2)
     print("Number of samples: ", n_samples, "Noise: ", noise)
     print(f"Test MSE for k={best_k_val}: {test_mse}")
-    print(f"MSE of the validation set: {np.round(validation_mse[best_k_val], 2)} \n")
+    print(f"Validation MSE for k={best_k_val}: {np.round(validation_mse[best_k_val], 2)} \n")
 
 
 def select_regularization_parameter(n_samples: int = 50, n_evaluations: int = 500):
@@ -132,10 +132,10 @@ def select_regularization_parameter(n_samples: int = 50, n_evaluations: int = 50
     fig.update_xaxes(title_text="Value of Regularization Parameter (λ)")
     fig.update_yaxes(title_text="Average MSE")
     fig.update_layout(height=500, width=1000, title_text=f"MSE on 5-fold cross-validation "
-                                 f"over different regularization parameter (λ) values <br>",margin=dict(t=100))
-    # fig.update_layout( title_text="Side By Side Subplots")
+                                                         f"over different regularization parameter (λ) values <br>",
+                      margin=dict(t=100))
     fig.show()
-    fig.write_image("../exercises/q7-MSE_ridge_lasso_over_lambda_val.png")
+    # fig.write_image("../exercises/q7-MSE_ridge_lasso_over_lambda_val.png")
 
     # Question 8 - Compare best Ridge model, best Lasso model and Least Squares model
     best_lam_ridge = lam_vals[np.argmin(ridge_validation_err)]
