@@ -7,6 +7,7 @@ from IMLearn.utils import split_train_test
 from IMLearn.model_selection import cross_validate
 from IMLearn.learners.regressors import PolynomialFitting, LinearRegression, RidgeRegression
 from sklearn.linear_model import Lasso
+from sklearn.model_selection import train_test_split
 
 from utils import *
 import plotly.graph_objects as go
@@ -100,11 +101,37 @@ def select_regularization_parameter(n_samples: int = 50, n_evaluations: int = 50
     """
     # Question 6 - Load diabetes dataset and split into training and testing portions
     diabetes_ds = datasets.load_diabetes()
-
-
+    X = diabetes_ds.data
+    y = diabetes_ds.target
+    X_train, X_test, y_train, y_test = train_test_split(X, y, train_size=n_samples)
 
     # Question 7 - Perform CV for different values of the regularization parameter for Ridge and Lasso regressions
-    raise NotImplementedError()
+    lam_vals = np.linspace(0.00001, 2, n_evaluations)
+    ridge_train_err, ridge_validation_err = [], []
+    lasso_train_err, lasso_validation_err = [], []
+    for lam in lam_vals:
+        ridge_reg = RidgeRegression(lam)
+        lasso_reg = Lasso(lam)
+        ridge_train_score, ridge_validation_score = cross_validate(ridge_reg, X_train, y_train, mean_square_error, 5)
+        lasso_train_score, lasso_validation_score = cross_validate(lasso_reg, X_train, y_train, mean_square_error, 5)
+        ridge_train_err.append(ridge_train_score)
+        ridge_validation_err.append(ridge_validation_score)
+        lasso_train_err.append(lasso_train_score)
+        lasso_validation_err.append(lasso_validation_score)
+
+    fig = make_subplots(rows=1, cols=2, subplot_titles=("Ridge Regularization", "Lasso Regularization"))
+
+    fig.add_trace(go.Scatter(x=lam_vals, y=ridge_train_err, name="Ridge Training Error", mode='lines+markers',),row=1, col=1)
+    fig.add_trace(go.Scatter(x=lam_vals, y=ridge_validation_err, name="Ridge Validation Error", mode='lines+markers',),row=1, col=1)
+    fig.add_trace(go.Scatter(x=lam_vals, y=lasso_train_err, name="Lasso Training Error", mode='lines+markers',),row=1, col=2)
+    fig.add_trace(go.Scatter(x=lam_vals, y=lasso_validation_err, name="Lasso Validation Error", mode='lines+markers',),row=1, col=2)
+    fig.update_xaxes(title_text="Value of Regularization Parameter (λ)")
+    fig.update_yaxes(title_text="Average MSE")
+    fig.update_layout(title_text=f"MSE on 5-fold cross-validation "
+                                 f"over different regularization parameter (λ) values <br>")
+    # fig.update_layout(height=600, width=800, title_text="Side By Side Subplots")
+    fig.show()
+    fig.write_image("../exercises/q7-MSE_ridge_lasso_over_lambda_val.png")
 
     # Question 8 - Compare best Ridge model, best Lasso model and Least Squares model
     raise NotImplementedError()
@@ -112,6 +139,7 @@ def select_regularization_parameter(n_samples: int = 50, n_evaluations: int = 50
 
 if __name__ == '__main__':
     np.random.seed(0)
-    select_polynomial_degree(100, 5)  # q1-3
-    select_polynomial_degree(100, 0)  # q4
-    select_polynomial_degree(1500, 10)  # q5
+    # select_polynomial_degree(100, 5)  # q1-3
+    # select_polynomial_degree(100, 0)  # q4
+    # select_polynomial_degree(1500, 10)  # q5
+    select_regularization_parameter()  # q6-8

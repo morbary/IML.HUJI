@@ -61,7 +61,7 @@ class RidgeRegression(BaseEstimator):
         """
         if self.include_intercept_:
             X = np.c_[np.ones((len(X), 1)), X]  # add column of ones to X
-        id_n = np.identity(len(y))
+        id_n = np.identity(X.shape[1])
         self.coefs_ = np.linalg.inv(X.T @ X + self.lam_ * id_n) @ X.T @ y
 
     def _predict(self, X: np.ndarray) -> np.ndarray:
