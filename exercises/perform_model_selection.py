@@ -121,20 +121,33 @@ def select_regularization_parameter(n_samples: int = 50, n_evaluations: int = 50
 
     fig = make_subplots(rows=1, cols=2, subplot_titles=("Ridge Regularization", "Lasso Regularization"))
 
-    fig.add_trace(go.Scatter(x=lam_vals, y=ridge_train_err, name="Ridge Training Error", mode='lines+markers',),row=1, col=1)
-    fig.add_trace(go.Scatter(x=lam_vals, y=ridge_validation_err, name="Ridge Validation Error", mode='lines+markers',),row=1, col=1)
-    fig.add_trace(go.Scatter(x=lam_vals, y=lasso_train_err, name="Lasso Training Error", mode='lines+markers',),row=1, col=2)
-    fig.add_trace(go.Scatter(x=lam_vals, y=lasso_validation_err, name="Lasso Validation Error", mode='lines+markers',),row=1, col=2)
+    fig.add_trace(go.Scatter(x=lam_vals, y=ridge_train_err, name="Ridge Training Error", mode='lines+markers', ), row=1,
+                  col=1)
+    fig.add_trace(go.Scatter(x=lam_vals, y=ridge_validation_err, name="Ridge Validation Error", mode='lines+markers', ),
+                  row=1, col=1)
+    fig.add_trace(go.Scatter(x=lam_vals, y=lasso_train_err, name="Lasso Training Error", mode='lines+markers', ), row=1,
+                  col=2)
+    fig.add_trace(go.Scatter(x=lam_vals, y=lasso_validation_err, name="Lasso Validation Error", mode='lines+markers', ),
+                  row=1, col=2)
     fig.update_xaxes(title_text="Value of Regularization Parameter (λ)")
     fig.update_yaxes(title_text="Average MSE")
-    fig.update_layout(title_text=f"MSE on 5-fold cross-validation "
-                                 f"over different regularization parameter (λ) values <br>")
-    # fig.update_layout(height=600, width=800, title_text="Side By Side Subplots")
+    fig.update_layout(height=500, width=1000, title_text=f"MSE on 5-fold cross-validation "
+                                 f"over different regularization parameter (λ) values <br>",margin=dict(t=100))
+    # fig.update_layout( title_text="Side By Side Subplots")
     fig.show()
     fig.write_image("../exercises/q7-MSE_ridge_lasso_over_lambda_val.png")
 
     # Question 8 - Compare best Ridge model, best Lasso model and Least Squares model
-    raise NotImplementedError()
+    best_lam_ridge = lam_vals[np.argmin(ridge_validation_err)]
+    print(f"Best Regularization parameter for Ridge regression: {best_lam_ridge}")
+    best_lam_lasso = lam_vals[np.argmin(lasso_validation_err)]
+    print(f"Best Regularization parameter for Lasso regression: {best_lam_lasso}\n")
+
+    estimator_names = ["Ridge Regression", "Lasso Regression", "Linear Regression"]
+    estimator_obj = [RidgeRegression(best_lam_ridge), Lasso(best_lam_lasso), LinearRegression()]
+    for i, estimator in enumerate(estimator_obj):
+        estimator.fit(X_train, y_train)
+        print(f"{estimator_names[i]} Test Error: {mean_square_error(y_test, estimator.predict(X_test))}")
 
 
 if __name__ == '__main__':
