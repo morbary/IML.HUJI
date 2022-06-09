@@ -15,22 +15,6 @@ def split_k_groups(x, y, k):
     return X_split, y_split
 
 
-# def split_train_dev_test(X_df, y_df, X_df_split, y_df_split, i, j):
-#     # use Si as development
-#     dev_X = X_df_split[i]
-#     dev_y = y_df_split[i]
-#
-#     # use Sj as test
-#     test_X = X_df_split[j]
-#     test_y = y_df_split[j]
-#
-#     # train model on S\SiUSj
-#     train_X = X_df.drop(dev_X.index).drop(test_X.index)
-#     train_y = y_df.loc[train_X.index]
-#
-#     return train_X, train_y, dev_X, dev_y, test_X, test_y
-
-
 def cross_validate(estimator: BaseEstimator, X: np.ndarray, y: np.ndarray,
                    scoring: Callable[[np.ndarray, np.ndarray, ...], float], cv: int = 5) -> Tuple[float, float]:
     """
@@ -85,23 +69,3 @@ def cross_validate(estimator: BaseEstimator, X: np.ndarray, y: np.ndarray,
         train_scores.append(scoring(y_train, estimator.predict(X_train)))
         validation_scores.append(scoring(y_dev, estimator.predict(X_dev)))
     return np.mean(train_scores), np.mean(validation_scores)
-
-# if __name__ == '__main__':
-# k = 3
-# cv = k
-#
-# X = np.array([[1, 2, 3, 4, 5],
-#               [6, 7, 8, 9, 10],
-#               [11, 12, 13, 14, 15],
-#               [16, 17, 18, 19, 20]])
-#
-# y = np.array([20, 30, 40, 50])
-#
-# X_df = pd.DataFrame(X)
-# y_df = pd.DataFrame(y)
-# X_df_split, y_df_split = split_k_groups(X_df, y_df, cv)
-#
-# ## for all i!=j, j>=k, i>=1
-# for i in range(cv):
-#     for j in range(i + 1, cv):
-#         train_X, train_y, dev_X, dev_y, test_X, test_y = split_train_dev_test(X_df_split, y_df_split, i, j)
