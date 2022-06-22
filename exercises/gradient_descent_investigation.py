@@ -46,12 +46,14 @@ def plot_descent_path(module: Type[BaseModule],
     fig = plot_descent_path(IMLearn.desent_methods.modules.L1, np.ndarray([[1,1],[0,0]]))
     fig.show()
     """
+
     def predict_(w):
         return np.array([module(weights=wi).compute_output() for wi in w])
 
     from utils import decision_surface
     return go.Figure([decision_surface(predict_, xrange=xrange, yrange=yrange, density=70, showscale=False),
-                      go.Scatter(x=descent_path[:, 0], y=descent_path[:, 1], mode="markers+lines", marker_color="black")],
+                      go.Scatter(x=descent_path[:, 0], y=descent_path[:, 1], mode="markers+lines",
+                                 marker_color="black")],
                      layout=go.Layout(xaxis=dict(range=xrange),
                                       yaxis=dict(range=yrange),
                                       title=f"GD Descent Path {title}"))
@@ -73,12 +75,64 @@ def get_gd_state_recorder_callback() -> Tuple[Callable[[], None], List[np.ndarra
     weights: List[np.ndarray]
         Recorded parameters
     """
-    raise NotImplementedError()
+    all_vals = []
+    all_weights = []
+
+    def callback(val, weights, **kwargs):
+        all_vals.append(val)
+        all_weights.append(weights)
+
+    return callback, all_vals, all_weights
 
 
 def compare_fixed_learning_rates(init: np.ndarray = np.array([np.sqrt(2), np.e / 3]),
                                  etas: Tuple[float] = (1, .1, .01, .001)):
-    raise NotImplementedError()
+    modules = [L1, L2]
+    module_names = ["L1", "L2"]
+    for i, module_type in enumerate(modules):
+        fig_convergence = go.Figure()  # q3
+        min_loss = np.inf
+        min_loss_eta = 1
+        module_name = module_names[i]
+        for eta in etas:  # minimize module for each value in etas
+            module = module_type(init)  # initialize module (L1 or L2)
+
+            callback, val_lst, weight_lst = get_gd_state_recorder_callback()
+            gd = GradientDescent(learning_rate=FixedLR(eta), callback=callback)  # initialize gradient descent
+            solution = gd.fit(module, X=None, y=None)  # fit gradient descent on base module
+
+            if val_lst[-1] < min_loss:
+                min_loss = val_lst[-1]
+                min_loss_eta = eta
+
+            # q1
+            descent_path = np.concatenate(weight_lst, axis=0).reshape(len(weight_lst), len(init))
+            plot_title = f" of {module_name} module with learning rate (eta)={eta}"
+            fig_descent_path = plot_descent_path(module=module_type,
+                                                 descent_path=descent_path,
+                                                 title=plot_title)
+            fig_descent_path.write_image(
+                f"../exercises/q1-gd_descent_path_" + module_name + "_eta_" + str(eta) + ".png")
+            # fig_descent_path.show()
+
+            # q3
+            fig_convergence.add_trace(
+                go.Scatter(x=list(range(1, len(val_lst) + 1)),
+                           y=val_lst,
+                           mode='markers+lines',
+                           name=str(eta)))
+        # q4
+        print(f"Lowest loss achieved for {module_name} = {min_loss}, eta: {min_loss_eta}")
+
+        # q3
+        fig_convergence.update_layout(title_text=f"Convergence Rate<br>"
+                                                 f"<sub>Module = {module_name}, Learning Rate (eta) = {eta}</sub>")
+        fig_convergence.update_xaxes(title_text="GD Iterations")
+        fig_convergence.update_yaxes(title_text="Norm")
+        fig_convergence.write_image(f"../exercises/q2-convergence_rate_" + module_name + ".png")
+        fig_convergence.show()
+
+        # break
 
 
 def compare_exponential_decay_rates(init: np.ndarray = np.array([np.sqrt(2), np.e / 3]),
@@ -141,5 +195,5 @@ def fit_logistic_regression():
 if __name__ == '__main__':
     np.random.seed(0)
     compare_fixed_learning_rates()
-    compare_exponential_decay_rates()
-    fit_logistic_regression()
+    # compare_exponential_decay_rates()
+    # fit_logistic_regression()
