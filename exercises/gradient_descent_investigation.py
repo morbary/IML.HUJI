@@ -159,7 +159,7 @@ def compare_exponential_decay_rates(init: np.ndarray = np.array([np.sqrt(2), np.
                                                  title=plot_title)
             fig_descent_path.write_image(
                 f"../exercises/q7-gd_descent_path_exp_learning_rate_gamma_" + str(gamma) + ".png")
-            fig_descent_path.show()
+            # fig_descent_path.show()
 
 
 
@@ -170,7 +170,7 @@ def compare_exponential_decay_rates(init: np.ndarray = np.array([np.sqrt(2), np.
     fig_convergence.update_xaxes(title_text="GD Iterations")
     fig_convergence.update_yaxes(title_text="Norm")
     fig_convergence.write_image(f"../exercises/q5-convergence_rate_L1_exponential.png")
-    fig_convergence.show()
+    # fig_convergence.show()
 
 
 
