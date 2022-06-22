@@ -107,7 +107,7 @@ def compare_fixed_learning_rates(init: np.ndarray = np.array([np.sqrt(2), np.e /
 
             # q1
             descent_path = np.concatenate(weight_lst, axis=0).reshape(len(weight_lst), len(init))
-            plot_title = f" of {module_name} module with learning rate (eta)={eta}"
+            plot_title = f"of {module_name} module with learning rate (eta)={eta}"
             fig_descent_path = plot_descent_path(module=module_type,
                                                  descent_path=descent_path,
                                                  title=plot_title)
@@ -137,7 +137,7 @@ def compare_fixed_learning_rates(init: np.ndarray = np.array([np.sqrt(2), np.e /
 def compare_exponential_decay_rates(init: np.ndarray = np.array([np.sqrt(2), np.e / 3]),
                                     eta: float = .1,
                                     gammas: Tuple[float] = (.9, .95, .99, 1)):
-    # q5 - Optimize the L1 objective using different decay-rate values of the exponentially decaying learning rate
+    # Optimize the L1 objective using different decay-rate values of the exponentially decaying learning rate
     fig_convergence = go.Figure()  # q5
     for gamma in gammas:
         l1 = L1(init)
@@ -150,6 +150,20 @@ def compare_exponential_decay_rates(init: np.ndarray = np.array([np.sqrt(2), np.
                        y=val_lst,
                        mode='markers+lines',
                        name=str(gamma)))
+        # q7- Plot descent path for gamma=0.95
+        if gamma == 0.95:
+            descent_path = np.concatenate(weight_lst, axis=0).reshape(len(weight_lst), len(init))
+            plot_title = f"of L1 module with exponential learning rate<br><sub> eta = {eta}, gamma ={gamma}</sub>"
+            fig_descent_path = plot_descent_path(module=L1,
+                                                 descent_path=descent_path,
+                                                 title=plot_title)
+            fig_descent_path.write_image(
+                f"../exercises/q7-gd_descent_path_exp_learning_rate_gamma_" + str(gamma) + ".png")
+            fig_descent_path.show()
+
+
+
+    # q5 - Plot algorithm's convergence for the different values of gamma
     fig_convergence.update_layout(title_text=f"Convergence Rate<br>"
                                              f"<sub>L1 module, eta ={eta}</sub>",
                                   legend_title=f"Gamma")
@@ -159,11 +173,7 @@ def compare_exponential_decay_rates(init: np.ndarray = np.array([np.sqrt(2), np.
     fig_convergence.show()
 
 
-    # Plot algorithm's convergence for the different values of gamma
-    raise NotImplementedError()
 
-    # Plot descent path for gamma=0.95
-    raise NotImplementedError()
 
 
 def load_data(path: str = "../datasets/SAheart.data", train_portion: float = .8) -> \
