@@ -126,20 +126,38 @@ def compare_fixed_learning_rates(init: np.ndarray = np.array([np.sqrt(2), np.e /
 
         # q3
         fig_convergence.update_layout(title_text=f"Convergence Rate<br>"
-                                                 f"<sub>Module = {module_name}, Learning Rate (eta) = {eta}</sub>")
+                                                 f"<sub>Module = {module_name}, Fixed Learning Rate</sub>",
+                                      legend_title=f"eta")
         fig_convergence.update_xaxes(title_text="GD Iterations")
         fig_convergence.update_yaxes(title_text="Norm")
         fig_convergence.write_image(f"../exercises/q2-convergence_rate_" + module_name + ".png")
-        fig_convergence.show()
-
-        # break
+        # fig_convergence.show()
 
 
 def compare_exponential_decay_rates(init: np.ndarray = np.array([np.sqrt(2), np.e / 3]),
                                     eta: float = .1,
                                     gammas: Tuple[float] = (.9, .95, .99, 1)):
-    # Optimize the L1 objective using different decay-rate values of the exponentially decaying learning rate
-    raise NotImplementedError()
+    # q5 - Optimize the L1 objective using different decay-rate values of the exponentially decaying learning rate
+    fig_convergence = go.Figure()  # q5
+    for gamma in gammas:
+        l1 = L1(init)
+        callback, val_lst, weight_lst = get_gd_state_recorder_callback()
+        gd = GradientDescent(learning_rate=ExponentialLR(base_lr=eta, decay_rate=gamma),
+                             callback=callback)  # initialize gradient descent
+        solution = gd.fit(l1, X=None, y=None)  # fit gradient descent on l1
+        fig_convergence.add_trace(
+            go.Scatter(x=list(range(1, len(val_lst) + 1)),
+                       y=val_lst,
+                       mode='markers+lines',
+                       name=str(gamma)))
+    fig_convergence.update_layout(title_text=f"Convergence Rate<br>"
+                                             f"<sub>L1 module, eta ={eta}</sub>",
+                                  legend_title=f"Gamma")
+    fig_convergence.update_xaxes(title_text="GD Iterations")
+    fig_convergence.update_yaxes(title_text="Norm")
+    fig_convergence.write_image(f"../exercises/q5-convergence_rate_L1_exponential.png")
+    fig_convergence.show()
+
 
     # Plot algorithm's convergence for the different values of gamma
     raise NotImplementedError()
@@ -195,5 +213,5 @@ def fit_logistic_regression():
 if __name__ == '__main__':
     np.random.seed(0)
     compare_fixed_learning_rates()
-    # compare_exponential_decay_rates()
+    compare_exponential_decay_rates()
     # fit_logistic_regression()
