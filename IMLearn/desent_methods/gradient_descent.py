@@ -120,35 +120,32 @@ class GradientDescent:
                 Euclidean norm of w^(t)-w^(t-1)
 
         """
-        min_val = f.compute_output(X=X, y=y)
-        best_sol = f.weights
-        sum_w = np.zeros(f.weights.shape[0]) + f.weights
-        T = 0
-        for t in range(self.max_iter_):
-            T += 1
-            eta = self.learning_rate_.lr_step(t=t)  # eta^(t+1)
-            grad = f.compute_jacobian(X=X, y=y)  # gradient
-            w_t = f.weights  # w^(t)
-            f.weights_ = f.weights - eta * grad  # w^(t+1)
-            val = f.compute_output(X=X, y=y)  # Value of objective function at current point, over given data
-            if val < min_val:  # update best solution
-                min_val = val
-                best_sol = f.weights
-            delta = np.linalg.norm(f.weights - w_t)  # Euclidean norm of w^(t+1)-w^(t)
-            self.callback_(solver=self,
-                           weights=f.weights,
-                           val=val,
-                           grad=grad,
-                           t=t,
-                           eta=eta,
-                           delta=delta)
-            sum_w += f.weights
-            if delta < self.tol_:  # Training stops when delta is less than tol
-                break
 
+        best_sol = f.weights_
+        w_sum = np.zeros(f.weights_.shape[0])
+        min_val = f.compute_output(X=X, y=y)
+        count_T = 0
+
+        for t in range(self.max_iter_):
+            eta = self.learning_rate_.lr_step(t=t)  # eta^(t+1)
+            w_sum += f.weights_
+            w_t = f.weights_  # w^(t)
+            cur_grad = f.compute_jacobian(X=X, y=y)  # gradient
+            f.weights = f.weights_ - eta * cur_grad  # w^(t+1)
+            cur_val = f.compute_output(X=X, y=y)  # Value of objective function at current point, over given data
+            if cur_val < min_val:  # update best solution
+                min_val = cur_val
+                best_sol = f.weights_
+            cur_delta = np.linalg.norm(f.weights_ - w_t)  # Euclidean norm of w^(t+1)-w^(t)
+            self.callback_(solver=self, weights=f.weights_, val=cur_val,
+                           grad=cur_grad,
+                           t=t, eta=eta, delta=cur_delta)
+            if cur_delta < self.tol_:  # Training stops when delta is less than tol
+                break
+            count_T += 1
         if self.out_type_ == 'last':
             return f.weights
         elif self.out_type_ == 'best':
             return best_sol
         else:  # return average
-            return sum_w / T
+            return w_sum / count_T
